@@ -24,44 +24,44 @@ public class Car implements Cloneable{
     public boolean canMove (Map map,String diraction,int count){
         for (int i = 1 ;i <= count ; i++){
         if (diraction.equals("l")){
-                if (startY > 0 && map.isCellEmpty[startX][startY-1] )
-                    return true;
+                if (startY < i || !map.isCellEmpty[startX][startY-i] )
+                    return false;
                     
         }
         else if (diraction.equals("r")){
             if(carSize==2){
-                if (startY < 4 && map.isCellEmpty[startX][startY+2]){
-                    return true;
+                if (startY >= 5-i || !map.isCellEmpty[startX][startY+1+i]){
+                    return false;
                 }
             }
             else {
-                    if (startY < 3 && map.isCellEmpty[startX][startY+3]){
-                    return true;
+                    if (startY >= 4-i || !map.isCellEmpty[startX][startY+2+i]){
+                    return false;
                     }
             }
         }
          else if (diraction.equals("u")){
-                if (startX > 0 && map.isCellEmpty[startX-1][startY]){
-                    return true;}
+                if (startX < i || !map.isCellEmpty[startX-i][startY]){
+                    return false;}
          }
          else if (diraction.equals("d")){
              if (carSize==2){
-                if (startX < 4 &&  map.isCellEmpty[startX+2][startY]){
-                    return true;}
+                if (startX >= 5-i  ||  !map.isCellEmpty[startX+1+i][startY]){
+                    return false;}
              }
              else {
-                 if (startX < 3 && map.isCellEmpty[startX+3][startY]){
-                    return true;
+                 if (startX >= 4-i || !map.isCellEmpty[startX+2+i][startY]){
+                    return false;
                      
                  }
              }
          }
         }
-        return false;
+        return true;
     }
     public boolean doMove(Map map,String diraction, int distance){
-            for (int i = 0 ; i < distance ; i++)
-                if (!canMove(map, diraction)){
+
+                if (!canMove(map, diraction,distance)){
                     System.out.println("hiiii "+carNo);
                     return false ; 
                    
