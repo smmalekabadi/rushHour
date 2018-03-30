@@ -42,8 +42,7 @@ public class AIfirstExe {
                 }
                 System.out.println(" ");
         }
-        // TODO code application logic here
-        
+
         Search s = new Search(map);
         
         String moves[]= new String[1000];

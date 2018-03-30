@@ -61,11 +61,8 @@ public class Car implements Cloneable{
     }
     public boolean doMove(Map map,String diraction, int distance){
 
-                if (!canMove(map, diraction,distance)){
-                    System.out.println("hiiii "+carNo);
-                    return false ; 
-                   
-                }
+                if (!canMove(map, diraction,distance))
+                    return false ;
             for (int i = 0 ; i < distance ; i++){
                 if (diraction.equals("l")){
                      map.isCellEmpty[startX][startY-1] = false;

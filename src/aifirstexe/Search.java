@@ -102,6 +102,11 @@ public class Search {
         for (;fringe.size()>j;){
             
                 if (!isNodeRepeated(fringe,fringe.get(j),j)){
+                    if (fringe.get(j).depth < itrDepth)
+                        fringe.addAll(j+1,makeChild( fringe.get(j) ));
+                    else
+                        fringe.addAll(makeChild(fringe.get(j)));
+
                     if (fringe.get(j).map.map[2][5] == 1 ){ // goal
                      
                      for(int l = 0 ; l < 6 ; l++ ){
@@ -111,10 +116,7 @@ public class Search {
                      }
                      return fringe.get(j); 
                  }
-                if (fringe.get(j).depth < itrDepth)
-                    fringe.addAll(j+1,makeChild( fringe.get(j) ));  
-                else
-                     fringe.addAll(makeChild(fringe.get(j)));
+
                 }
                 j++;
         }    
