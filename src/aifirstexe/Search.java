@@ -18,6 +18,30 @@ public class Search {
         this.map = map;
     
     }
+    public Node gbfs() throws CloneNotSupportedException {
+        Node intial = new Node( map, null,0,0,0,null,0);
+        ArrayList<Node> fringe = new ArrayList<Node>();
+        fringe.add(intial);
+        int i=0;
+        while (!fringe.isEmpty()){
+
+            if (!isNodeRepeated(fringe,fringe.get(i),i)){
+                fringe.addAll(i+1,makeChild( fringe.get(i) ,"bgfs"));
+                Collections.sort(fringe);
+                if (fringe.get(i).map.map[2][5] == 1 ){ // goal
+
+                    for(int j = 0 ; j < 6 ; j++ ){
+                        for(int k = 0 ; k < 6 ; k++){
+                            System.out.print(fringe.get(i).map.map[j][k]);}
+                        System.out.println("");
+                    }
+                    return fringe.get(i);
+                }
+            }
+            i++;
+        }
+        return null;
+    }
     public Node[] bds() throws CloneNotSupportedException{
       Node node =  bfs();
       Node ans[]= new Node[2];
@@ -45,7 +69,7 @@ public class Search {
                      }
                      return ans;
                 }
-                fringe1.addAll(makeChild(fringe1.get(i)));
+                fringe1.addAll(makeChild(fringe1.get(i),"ucs"));
             }
             if (!isNodeRepeated(fringe2,fringe2.get(i),i)){
                 Node match = findNodeOnList(fringe2.get(i), fringe1);
@@ -64,35 +88,43 @@ public class Search {
                      }
                     return ans;
                 }
-                fringe2.addAll(makeChild(fringe2.get(i)));
+                fringe2.addAll(makeChild(fringe2.get(i),"ucs"));
             }
             i++;
          }
     return null;
     }
     public Node ucs() throws CloneNotSupportedException{
-        Node intial = new Node( map, null,0,0,0,null,0);
+        Node intial = new Node( map, null,0,0,null,0);
         ArrayList<Node> fringe = new ArrayList<Node>();
+        ArrayList<Node> visited = new ArrayList<Node>();
         fringe.add(intial);
-        int i=0;
+        int i = 0;
+        int count = 0;
         while (!fringe.isEmpty()){
-            
-            if (!isNodeRepeated(fringe,fringe.get(i),i)){    
-                fringe.addAll(i+1,makeChild( fringe.get(i) ));
+
+            if (findNodeOnList(fringe.get(i),visited) == null ){
+
+                fringe.addAll(makeChild(fringe.get(i),"ucs"));
+                visited.add(fringe.get(i));
                 Collections.sort(fringe);
+                System.out.println(count++);
                 if (fringe.get(i).map.map[2][5] == 1 ){ // goal
-                     
-                     for(int j = 0 ; j < 6 ; j++ ){
+
+                    for(int j = 0 ; j < 6 ; j++ ){
                         for(int k = 0 ; k < 6 ; k++){
-                             System.out.print(fringe.get(i).map.map[j][k]);}
+                            System.out.print(fringe.get(i).map.map[j][k]);}
                         System.out.println("");
-                     }
-                     return fringe.get(i); 
-                 }
+                    }
+                    return fringe.get(i);
                 }
-            i++;
+
+                i=0;
+            }
+            else
+                i++;
         }
-    return null;
+        return null;
     }
     public Node ids(int itrDepth) throws CloneNotSupportedException{
         Node intial = new Node( map, null,0,0,null,0);
@@ -103,9 +135,9 @@ public class Search {
             
                 if (!isNodeRepeated(fringe,fringe.get(j),j)){
                     if (fringe.get(j).depth < itrDepth)
-                        fringe.addAll(j+1,makeChild( fringe.get(j) ));
+                        fringe.addAll(j+1,makeChild( fringe.get(j) ,"ucs"));
                     else
-                        fringe.addAll(makeChild(fringe.get(j)));
+                        fringe.addAll(makeChild(fringe.get(j),"ucs"));
 
                     if (fringe.get(j).map.map[2][5] == 1 ){ // goal
                      
@@ -133,7 +165,7 @@ public class Search {
             
             if (!isNodeRepeated(fringe,fringe.get(i),i)){
 
-                fringe.addAll(i+1,makeChild( fringe.get(i) ));
+                fringe.addAll(i+1,makeChild( fringe.get(i) ,"ucs"));
                 System.out.println(count++);
                 if (fringe.get(i).map.map[2][5] == 1 ){ // goal
                      
@@ -160,7 +192,7 @@ public class Search {
             
             if (!isNodeRepeated(fringe,fringe.get(i),i)){
                
-                 fringe.addAll(makeChild(fringe.get(i)));
+                 fringe.addAll(makeChild(fringe.get(i),"ucs"));
                 System.out.println(count++);
                  if (fringe.get(i).map.map[2][5] == 1 ){ // goal
                      
@@ -176,7 +208,7 @@ public class Search {
         }
         return null;
     }
-    public ArrayList<Node> makeChild(Node node) throws CloneNotSupportedException{
+    public ArrayList<Node> makeChild(Node node,String type) throws CloneNotSupportedException{
         ArrayList<Node> fringe = new ArrayList<Node>();
         System.out.println("father map");
          for (int i = 0; i < 6; i++) {
@@ -195,7 +227,7 @@ public class Search {
                     newMap = (Map) node.map.clone();
                     c.doMove(newMap, "l", count);
                     newMap.carlist.set(c.carNo-1, c) ;
-                    fringe.add(new Node(newMap, node,node.depth+1,node.cost + c.carSize,c.carNo,"l",count));
+                    fringe.add(new Node(newMap, node,node.depth+1,generateCost(newMap,c,node,type,"l") ,"l",count));
                 }
                 if(car.canMove(node.map, "r",count)){
                     Car c =  (Car) car.clone();
@@ -203,7 +235,7 @@ public class Search {
                     newMap = (Map) node.map.clone();
                     c.doMove(newMap, "r", count);
                     newMap.carlist.set(c.carNo-1, c) ;
-                    fringe.add(new Node(newMap, node,node.depth+1,node.cost + c.carSize-1,c.carNo,"r",count));
+                    fringe.add(new Node(newMap, node,node.depth+1,generateCost(newMap,c,node,type,"r"),"r",count));
                 }
             }
             else {
@@ -213,7 +245,7 @@ public class Search {
                     newMap = (Map) node.map.clone();
                     c.doMove(newMap, "u", count);
                     newMap.carlist.set(c.carNo-1, c) ;
-                    fringe.add(new Node(newMap, node,node.depth+1,node.cost + c.carSize,c.carNo,"u",count));
+                    fringe.add(new Node(newMap, node,node.depth+1,generateCost(newMap,c,node,type,"u"),"u",count));
                     }
                 if(car.canMove(node.map, "d",count)){
                     Car c =  (Car) car.clone();
@@ -221,7 +253,7 @@ public class Search {
                     newMap = (Map) node.map.clone();
                     c.doMove(newMap, "d", count);
                     newMap.carlist.set(c.carNo-1, c) ;
-                    fringe.add(new Node(newMap, node,node.depth+1,node.cost + c.carSize-1,c.carNo,"d",count));
+                    fringe.add(new Node(newMap, node,node.depth+1,generateCost(newMap,c,node,type,"d"),"d",count));
                 }
             }
             }
@@ -235,8 +267,6 @@ public class Search {
             return false;
         int a = 0 ; 
         for (int i = 0 ; i < ii-1 ; i++ ) {
-            
-            
             for(int j = 0 ; j < 6 ; j++ ){
                 for(int k = 0 ; k < 6 ; k++){
                     if (fringe.get(i).map.map[j][k] != test.map.map[j][k])
@@ -257,22 +287,31 @@ public class Search {
         int a = 0 ; 
        
         for (Node node1 : list) {
-            label:
             for(int j = 0 ; j < 6 ; j++ ){
                 for(int k = 0 ; k < 6 ; k++){
-                    if (node1.map.map[j][k] != node.map.map[j][k]){
+                    if ( node1.map.map[j][k] != node.map.map[j][k] )
                         a=1;
-                        break label;
-                    }
                 }
             }
             if (a==0)
                 return node1;
             a=0;
-            
         }
-          
         return null;
+    }
+    public int generateCost(Map map,Car car,Node node, String type,String dir){
+
+        if (type.equals("ucs")){
+            if (dir.equals("l") || dir.equals("u"))
+                return node.cost + car.carSize;
+            else
+                return node.cost + car.carSize - 1;
+        }
+        else if (type.equals("gbfs")){
+            return Hurestics.heurstic(map);
+        }
+        else
+            return node.cost + Hurestics.heurstic(map);
     }
     
 }
