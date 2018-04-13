@@ -49,7 +49,7 @@ public class AIfirstExe {
 
         String moves[] = new String[1000];
         int i = 0;
-        Node node = s.rbfs();
+        Node node = s.gbfs();
 //        Node node = node1[0];
 //        Node node0 = node1[1];
         while (node.parent != null) {

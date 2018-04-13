@@ -87,8 +87,10 @@ public class Search {
             j++;
             if (fringe.isEmpty())
                 break label;
-            }
             cutOff = minCutOff ;
+        }
+
+
         }
         return null;
 
@@ -102,74 +104,152 @@ public class Search {
         ArrayList<Node> temp = new ArrayList<>();
         depthSecMinCost.add(100000);
         depthSecMinNode.add(intial);
+
         int i = 0;
         while (!fringe.isEmpty()) {
 
-            if (!isNodeRepeated(fringe,fringe.get(i),i)){
-            temp.addAll(makeChild(fringe.get(i), "rbfs"));
-            Collections.sort(temp);
-            for (int j = 0; j < temp.size(); j++) {
-                if (findNodeOnList(temp.get(0), fringe) != null)
-                    temp.remove(0);
-                else
-                    break;
-            }
-            fringe.addAll(temp);
-            if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.depth)) { // father's sec cost is smaller than children
-                //fringe.add(depthSecMinNode.get(fringe.get(i).depth));
+           // if (!isNodeRepeated(fringe,fringe.get(i),i)){
+                temp.addAll(makeChild(fringe.get(i), "rbfs"));
+                Collections.sort(temp);
+//                for (int j = 0; j < temp.size(); j++) {
+//                    if (findNodeOnList(temp.get(j), fringe) != null){
+//                        temp.remove(j);
+//                        j--;
+//                    }
+//                    else
+//                        break;
+//                }
+                if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.depth)){
+                    if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.parent.depth)) {
+                        System.out.println( "i am higher than my gp" );
+                        System.out.println(temp.get(0).cost);
+                        depthSecMinCost.remove(fringe.get(i).depth);
+                        depthSecMinCost.add(fringe.get(i).depth, depthSecMinCost.get(fringe.get(i).parent.depth));
 
-                if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.parent.depth)) {
-                    depthSecMinCost.remove(fringe.get(i).depth);
-                    depthSecMinCost.add(fringe.get(i).depth, depthSecMinCost.get(fringe.get(i).parent.depth));
-                    Node tempMinNode = depthSecMinNode.get(fringe.get(i).depth);
-                    depthSecMinNode.remove(fringe.get(i).depth);
-                    depthSecMinNode.add(fringe.get(i).depth, depthSecMinNode.get(fringe.get(i).parent.depth));
-                    fringe.add(tempMinNode);
-                } else {
-                    //int tempMinCost = depthSecMinCost.get(fringe.get(i).depth);
-                    Node tempMinNode = depthSecMinNode.get(fringe.get(i).depth);
-                    depthSecMinCost.remove(fringe.get(i).depth);
-                    depthSecMinCost.add(fringe.get(i).depth, temp.get(0).cost);
-                    depthSecMinNode.remove(fringe.get(i).depth);
-                    depthSecMinNode.add(fringe.get(i).depth, fringe.get(i));
-                    fringe.add(tempMinNode);
+                        fringe.add( depthSecMinNode.get(fringe.get(i).depth));
+                        depthSecMinNode.remove(fringe.get(i).depth);
+                        depthSecMinNode.add(fringe.get(i).depth, depthSecMinNode.get(fringe.get(i).parent.depth));
+
+                    }
+                    else{
+                        System.out.println("i am higher than my father");
+                        System.out.println(temp.get(0).cost);
+                        fringe.add(depthSecMinNode.get(fringe.get(i).depth));
+                        depthSecMinCost.remove(fringe.get(i).depth);
+                        depthSecMinCost.add(fringe.get(i).depth, temp.get(0).cost);
+                        depthSecMinNode.remove(fringe.get(i).depth);
+                        depthSecMinNode.add(fringe.get(i).depth, fringe.get(i));
+
+
+                    }
+
+
+
                 }
-
-
-            } else if (temp.size() > 1 && temp.get(1).cost > depthSecMinCost.get(temp.get(0).parent.depth)) { // father's sec cost is between
-                fringe.add(temp.get(0));
-                depthSecMinNode.add(depthSecMinNode.get(depthSecMinNode.size() - 1));
-                depthSecMinCost.add(depthSecMinCost.get(depthSecMinCost.size() - 1));
-            } else {
-                fringe.add(temp.get(0));
-                if (temp.size() <= 1) {
+                else if (temp.get(1).cost > depthSecMinCost.get(temp.get(0).parent.depth)){
+                    System.out.println("i am between");
+                    System.out.println(temp.get(0).cost);
+                    fringe.add(temp.get(0));
                     depthSecMinNode.add(depthSecMinNode.get(depthSecMinNode.size() - 1));
                     depthSecMinCost.add(depthSecMinCost.get(depthSecMinCost.size() - 1));
+                }
+                else {
+                    System.out.println("i am smallest");
+                    System.out.println(temp.get(0).cost);
+                    fringe.add(temp.get(0));
 
-                } else {
                     depthSecMinNode.add(temp.get(1));
                     depthSecMinCost.add(temp.get(1).cost);
+//
                 }
-            }
-            temp.clear();
-            if (fringe.get(i).map.map[2][5] == 1) { // goal
+                temp.clear();
+                if (fringe.get(i).map.map[2][5] == 1) { // goal
 
-                for (int l = 0; l < 6; l++) {
-                    for (int k = 0; k < 6; k++) {
-                        System.out.print(fringe.get(i).map.map[l][k]);
+                    for (int l = 0; l < 6; l++) {
+                        for (int k = 0; k < 6; k++) {
+                            System.out.print(fringe.get(i).map.map[l][k]);
+                        }
+                        System.out.println("");
                     }
-                    System.out.println("");
+                    return fringe.get(i);
                 }
-                return fringe.get(i);
-            }
-
-        }
-               i++;
 
 
+
+//            }
+              i++;
+
+
+
+
+            //
+//            if (!isNodeRepeated(fringe,fringe.get(i),i)){
+//            temp.addAll(makeChild(fringe.get(i), "rbfs"));
+//            Collections.sort(temp);
+//            for (int j = 0; j < temp.size(); j++) {
+//                if (findNodeOnList(temp.get(0), fringe) != null)
+//                    temp.remove(0);
+//                else
+//                    break;
+//            }
+//            fringe.addAll(temp);
+//            if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.depth)) { // father's sec cost is smaller than children
+//                //fringe.add(depthSecMinNode.get(fringe.get(i).depth));
+//
+//                if (temp.get(0).cost > depthSecMinCost.get(temp.get(0).parent.parent.depth)) {
+//                    depthSecMinCost.remove(fringe.get(i).depth);
+//                    depthSecMinCost.add(fringe.get(i).depth, depthSecMinCost.get(fringe.get(i).parent.depth));
+//                    Node tempMinNode = depthSecMinNode.get(fringe.get(i).depth);
+//                    depthSecMinNode.remove(fringe.get(i).depth);
+//                    depthSecMinNode.add(fringe.get(i).depth, depthSecMinNode.get(fringe.get(i).parent.depth));
+//                    fringe.add(tempMinNode);
+//                } else {
+//                    //int tempMinCost = depthSecMinCost.get(fringe.get(i).depth);
+//                    Node tempMinNode = depthSecMinNode.get(fringe.get(i).depth);
+//                    depthSecMinCost.remove(fringe.get(i).depth);
+//                    depthSecMinCost.add(fringe.get(i).depth, temp.get(0).cost);
+//                    depthSecMinNode.remove(fringe.get(i).depth);
+//                    depthSecMinNode.add(fringe.get(i).depth, fringe.get(i));
+//                    fringe.add(tempMinNode);
+//                }
+//
+//
+//            } else if (temp.size() > 1 && temp.get(1).cost > depthSecMinCost.get(temp.get(0).parent.depth)) { // father's sec cost is between
+//                fringe.add(temp.get(0));
+//                depthSecMinNode.add(depthSecMinNode.get(depthSecMinNode.size() - 1));
+//                depthSecMinCost.add(depthSecMinCost.get(depthSecMinCost.size() - 1));
+//            } else {
+//                fringe.add(temp.get(0));
+//                if (temp.size() <= 1) {
+//                    depthSecMinNode.add(depthSecMinNode.get(depthSecMinNode.size() - 1));
+//                    depthSecMinCost.add(depthSecMinCost.get(depthSecMinCost.size() - 1));
+//
+//                } else {
+//                    depthSecMinNode.add(temp.get(1));
+//                    depthSecMinCost.add(temp.get(1).cost);
+//                }
+//            }
+//            temp.clear();
+//            if (fringe.get(i).map.map[2][5] == 1) { // goal
+//
+//                for (int l = 0; l < 6; l++) {
+//                    for (int k = 0; k < 6; k++) {
+//                        System.out.print(fringe.get(i).map.map[l][k]);
+//                    }
+//                    System.out.println("");
+//                }
+//                return fringe.get(i);
+//            }
+//
+//        }
+//               i++;
+//
+//
+//        }
         }
         return null;
     }
+
 
     public Node Astar() throws CloneNotSupportedException {
         Node intial = new Node( map, null,0,0,null,0);
