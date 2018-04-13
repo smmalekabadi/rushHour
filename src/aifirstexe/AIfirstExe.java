@@ -14,9 +14,10 @@ import java.io.*;
 public class AIfirstExe {
 
     /**
-     * @param args the command line arguments
+     * @param args the command line argumentsu
      */
     public static void main(String[] args) throws CloneNotSupportedException, UnsupportedEncodingException, FileNotFoundException, IOException {
+
         BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(("temp.txt"))));
         String line = "";
         Map map = new Map();
@@ -42,12 +43,13 @@ public class AIfirstExe {
             }
             System.out.println(" ");
         }
+        System.out.println(Hurestics.heurstic(map));
 
         Search s = new Search(map);
 
         String moves[] = new String[1000];
         int i = 0;
-        Node node = s.ucs();
+        Node node = s.rbfs();
 //        Node node = node1[0];
 //        Node node0 = node1[1];
         while (node.parent != null) {
